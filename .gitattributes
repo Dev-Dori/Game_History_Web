@@ -1,2 +1,2 @@
 * linguist-vendored
-*.Django linguist-vendored=false
+*.Py linguist-vendored=false
