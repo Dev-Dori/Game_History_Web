@@ -5,4 +5,4 @@
 ->using Djnago league of legend match history site 
 
 
-please change lol api code
+please change api code
