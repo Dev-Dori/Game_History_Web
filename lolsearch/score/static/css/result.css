@@ -1,0 +1,200 @@
+#login_bar{
+           background-color: red;
+        }
+
+        .btn-secondary:hover{
+            border: 2px solid white;
+         }
+
+        .btn-secondary{
+            height: 47px;
+            color : rgb(232,193,147);
+            border: 1.2px solid white;
+            background-color: rgb(46,46,49);
+            outline-color: blueviolet;
+        }
+
+        .input-group{
+            margin-top: 15px;
+        }
+
+        .inbox_letter{
+            color: white;
+        }
+
+        .main_solid{
+            padding-bottom: 30px;
+            margin-top: 2px;
+            padding-top: 0.2px;
+            border-radius: 18px;
+            border : 3px solid white;
+        }
+
+        .border-secondary{
+            border-radius: 10px;
+            padding: 2%;
+        }
+
+        .border{
+           border: 3px solid #e9ecef!important;
+        }
+
+        .tier_icon{
+            border-radius: 25px;
+            border: 1px solid white;
+            width:86%;
+        }
+
+        .gameinfo_sec0{
+            margin-top: 15px;
+            padding-bottom:0px;
+            color: white;
+            background-color:
+            black; border-radius:0;
+        }
+
+        .gameinfo_sec1{
+            height : 70px;
+            text-align: center;
+            display:inline-flex;
+            margin: 7px 0px 1px 6px;
+            border-radius: 5px 0px 0px 5px;
+            margin: 2px 3px;
+            width: 3px;
+        }
+
+        .game_mode_sec1{
+            color: gray;
+            float:left;
+            text-align: center;
+            margin-left: 18px;
+            margin-bottom: 9px;
+            height:30px;
+            width: 40px;
+            border-bottom: 2px solid gray;
+        }
+
+        .win_lose{
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .champImg{
+            display: block;
+            display:flex;
+        }
+
+        .game_mode_font{
+             padding-top:1px;
+             text-align:center;
+             margin-top:2px;
+        }
+
+        .champImg > img{
+            padding-bottom: 6px;
+            height: 8em;
+            width: 7em;
+            border-radius: 64px;
+            margin: 7px 0px 0px 6px;
+        }
+
+        .avg_kda{
+            font-weight: bold;
+            color: rgb(232,193,147);
+        }
+
+        .play_time{
+            margin: 50px 0px 0px 5px;
+            font-weight: bold;
+            padding: 1px;
+            color: rgb(93 125 200);
+            border-radius: 3px;
+            background: rgba(1, 55, 86, 0.7);
+            font-size: 15px;
+        }
+
+        .kda{
+            display:inline-block;
+            margin-right: 16px;
+            width: 93px;
+            text-align: center;
+        }
+
+        .sec_03{
+            margin-right: 16px;
+            width: 124px;
+        }
+
+        .player_team{
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        /*--------- 툴팁 ---------- */
+
+        /*
+	css-only-tooltip version 1.0.0
+	ⓒ 2015 AHN JAE-HA http://github.com/eu81273
+	MIT License
+*/
+
+
+[data-tooltip-text]:hover {
+	position: relative;
+}
+
+[data-tooltip-text]:after {
+	-webkit-transition: bottom .3s ease-in-out, opacity .3s ease-in-out;
+	-moz-transition: bottom .3s ease-in-out, opacity .3s ease-in-out;
+	transition: bottom .3s ease-in-out, opacity .3s ease-in-out;
+
+	background-color: rgba(0, 0, 0, 0.8);
+
+  -webkit-box-shadow: 0px 0px 3px 1px rgba(50, 50, 50, 0.4);
+	-moz-box-shadow: 0px 0px 3px 1px rgba(50, 50, 50, 0.4);
+	box-shadow: 0px 0px 3px 1px rgba(50, 50, 50, 0.4);
+
+  -webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+
+  color: #FFFFFF;
+	font-size: 12px;
+	margin-bottom: 10px;
+	padding: 7px 12px;
+	position: absolute;
+	width: 100px;
+	min-width: 50px;
+	max-width: 300px;
+	word-wrap: break-word;
+
+	z-index: 9999;
+
+	opacity: 0;
+	left: -9999px;
+  top: 90%;
+
+	content: attr(data-tooltip-text);
+}
+
+[data-tooltip-text]:hover:after {
+	top: 130%;
+	left: 0;
+	opacity: 1;
+}
+
+
+
+/*---- 원형 그래프   */
+
+$('.chart1').easyPieChart({
+    barColor: '#f16529',  //차트가 그려질 색
+    trackColor: '#ccc',  // 차트가 그려지는 트랙의 기본 배경색(chart1 의 회색부분)
+    scaleColor: '#fff', // 차트 테두리에 그려지는 기준선 (chart2	의 테두리 선)
+    lineCap: 'butt', // 차트 선의 모양 chart1 butt / chart2 round / chart3 square
+    lineWidth: 30, // 차트 선의 두께
+    size: 200, // 차트크기
+    animate: 1000, // 그려지는 시간
+    onStart: $.noop,
+    onStop: $.noop
+  });

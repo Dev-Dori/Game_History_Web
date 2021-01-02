@@ -1,0 +1,273 @@
+{% load static %}
+<html>
+    <head>
+        <title>전적검색</title>
+        <link href="https://fonts.googleapis.com/earlyaccess/notosanskr.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="{% static 'css/result.css' %}?after">
+        <link rel="stylesheet" href="https://cdn.rawgit.com/theus/chart.css/v1.0.0/dist/chart.css" />
+        <link rel="stylesheet" href="{% static 'css/circle.css' %}?after">
+
+
+        <script>
+            var index = 0;
+            var mykda_list = {{ mykda_list|safe }};
+            var mychampionid_list = {{ mychampionid_list|safe }};
+            var mychampionidurl_list = [];
+            for(var i=0; i<mykda_list.length; i++){
+                mychampionidurl_list[i] = "http://z.fow.kr/champ/" + mychampionid_list[i] + "_64.png";
+            }
+            var gametime_list = {{ gametime_list|safe }};
+            var avgKDA_list = {{ myavgkda_list|safe }};
+            var nickname_list = {{ nickname_list|safe }};
+            var damage_list = {{ damage_list|safe }};
+            var total_damage = [10];
+            var per_damage = [][10];
+            for(var i=0;i<10;i++){
+                total_damage[i] = damage_list[i][0] + damage_list[i][1]+damage_list[i][2]+damage_list[i][3]+damage_list[i][4];
+            }
+
+
+        </script>
+
+        <style>
+        .charts:not(.charts--vertical) {
+             width: 4000%;
+        }
+
+        </style>
+    </head>
+
+
+    <body style="background-color: rgb(46, 47 ,50); overflow-x:hidden;">
+
+        <div class="container">
+            <!-- 첫번째 블록 시작-->
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <form method="get" name="search_form" action="{% url 'score:search_result' %}" >
+                        <div class="input-group">
+                        <input type="text" class="form-control" placeholder="소환사명" name="search_text"  value="{{search_text}}">
+                        <span class="input-group-btn">
+                              <button class="btn btn-secondary" type="submit">검색</button>
+                        </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 첫번째 블록 끝 -->
+
+            {% if summoner_exist %}
+
+            <!-- 두번째 블록 시작-->
+            <div class="main_solid" style="background: rgb(25, 28, 32)">
+                <div class="row" style="margin: 40px; float: none;">
+                    <img style="display: block; margin: 0px; width: 25%" class="img-thumbnail" src="https://opgg-static.akamaized.net/images/profile_icons/profileIcon{{summoners_result.profileIconId}}.jpg?image=q_auto&v=1518361200">  <!-- {% static 'images/profileicon/' %}{{summoners_result.profileIconId}}.png-->
+                    <span  class="inbox_letter" style="margin: 20 0 0 20; font-size: 32px;font-weight:bold;">{{ summoners_result.name }}<br>
+                    <span  class="inbox_letter" style="font-size: 20px; ">LV: {{ summoners_result.level }}</span>
+                    </span>
+
+                    {% if summoner_exist %}
+                    <div class="row" id="printname" style="margin: 3px; float: none;">
+                            {% if spectator %}
+                            <span style="color: lawngreen; font-size: 25px">●</span><br>
+                            {% else %}
+                            <span style="color: gray; font-size: 25px">●</span><br>
+                            {% endif %}
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="row" id="two_box">
+                    {% if team_tier or solo_tier %}
+                    <div style="float: none; margin: 0 auto" class="col-5 border border-secondary">
+                    <div class="row">
+                    {% if solo_tier %}
+                        <div class="col-4"> <img src="{% static 'images/emblems/' %}{{solo_tier.tier}}.png" class="tier_icon"> <!--{% static 'images/emblems/Emblem_' %}{{solo_tier.tier}}.png --></div>
+                            <div class="inbox_letter" >
+                            <p>리그: {{ solo_tier.rank_type }}<br></p>
+                                티어: {{ solo_tier.tier }} {{ solo_tier.rank }}<br>
+                                포인트: {{ solo_tier.points }}<br>
+                                전적: {{ solo_tier.wins|add:solo_tier.losses}}전 {{ solo_tier.wins }}승 {{ solo_tier.losses }}패
+                            </div>
+                        </div>
+                    {% else %}
+                            <div class="inbox_letter">배치&전적정보없음</div>
+                    {% endif %}
+                    </div>
+
+
+                    <div class="c100 p70 big green">
+                        <span>80%</span>
+                        <div class="slice">
+                            <div class="bar"></div>
+                            <div class="fill"></div>
+                        </div>
+                    </div>
+
+                    <div style="float: none; margin: 0 auto" class="col-5 border border-secondary">
+                        <div class="row">
+
+                        {% if team_tier %}
+                            <div class="col-4"><img src="{% static 'images/emblems/' %}{{team_tier.tier}}.png"  class="tier_icon"></div>
+                            <div class="inbox_letter">
+                            <p>리그: {{ team_tier.rank_type }}</p>
+                                티어: {{ team_tier.tier }} {{ team_tier.rank }}<br>
+                                포인트: {{ team_tier.points }}<br>
+                                전적: {{ team_tier.wins|add:team_tier.losses}}전 {{ team_tier.wins }}승 {{ team_tier.losses }}패
+                            </div>
+                        {% else %}<div class="inbox_letter">배치&전적정보없음</div>{% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+
+                <div style="float: none; margin: 0 auto" class="col-5 border border-secondary"><div class="row"><div class="inbox_letter">배치&전적정보없음</div></div></div>
+
+                </div>
+                {% endif %}
+                {% else %}<div class="inbox_letter" style="border: 2px solid white; border-radius: 5px; padding: 6px;">사용자가 존재하지 않습니다. </div>{% endif %}
+            </div>
+
+            <!-- 두번째 블록 끝 -->
+
+
+            {% if summoner_exist %}
+
+            <!-- 3번째 블록 시작-->
+                {% for win in win_list %}{% for alpha in gametype_list %}
+                      {% if forloop.counter == forloop.parentloop.counter %}
+                        {% if win%}
+                            <div class="main_solid gameinfo_sec0" style="display:flex">
+                              <div style="display:inline-flex">
+                                <div class="gameinfo_sec" style=" background-color: rgb(163,207,236);; border-radius: 5px 0px 0px 5px; margin: 2px 3px; width: 10px;"></div>
+
+                                <div class="champImg" style="display:inline-flex; float:none; padding-bottom: 1.7px; margin: 0px 2px 0px -3px; ">
+                                    <script>
+                                        document.write("<img src=\""+ mychampionidurl_list[index] +"\">");
+                                    </script>
+                                </div>
+                              </div>
+
+                              <div class="sec_02" style="margin: 27px 6px 0px 5px;">
+                                    <div class="win_lose" style="color:rgb(73, 180, 255); padding-left: 0px; margin-top: 38%">승리</div>
+                                    <div class="game_mode_font" style="border-top: 2px solid gray; font-size: 12px; color:gray; font-weight: bold; text-align:center">{{alpha}}</div>
+                              </div>
+
+                              <div class="sec_02" style="margin: 1px 6px 0px 5px;">
+                                    <div class="play_time">
+                                        <script>document.write("플레이타임: "+Math.floor(gametime_list[index])+"분")</script>
+                                    </div>
+                              </div>
+
+                              <div class="gameinfo_sec" style="background-color: rgb(163,207,236);border-radius: 0px 5px 5px 0px;margin: 2px 6px;width: 10px;"></div>
+
+                              <div class="kda" style="display:inline-block; padding-top: 14px;    margin-top: 25px;">
+                                    <div style="font-weight: bold; color: rgb(232,193,147); font-size: 15px;">
+                                        <script>document.write(avgKDA_list[index].toFixed(2) + " KDA");</script>
+                                    </div>
+
+                                    <div style="font-size: 14px; color:  rgb(137, 160, 181); font-weight: bold; padding-top: 2px;  text-align:center">
+                                        <script>
+                                        document.write(mykda_list[index]);
+                                        </script>
+                                    </div>
+                              </div>
+
+                              <div class="sec_03" style="display:inline-block; margin-top: 5px;">
+                                  <div class="player_team" id="player1_W"><script>document.write("<span data-tooltip-text=\"name: "+ nickname_list[index][0] +"\">"+nickname_list[index][0]+"</span>")</script></div>
+                                  <div class="player_team" id="player2_W"><script>document.write(nickname_list[index][1])</script></div>
+                                  <div class="player_team" id="player3_W"><script>document.write(nickname_list[index][2])</script></div>
+                                  <div class="player_team" id="player4_W"><script>document.write(nickname_list[index][3])</script></div>
+                                  <div class="player_team" id="player5_W"><script>document.write(nickname_list[index][4])</script></div>
+                              </div>
+
+
+
+                              <div class="sec_05" style="display:inline-block;">
+                                    <div class="charts" style="width: 5000%;">
+                                        <script>document.write("<span data-tooltip-text=\"총딜량: "+ damage_list[index][0] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][0])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][0])/ total_damage[index]*100)+" chart--default\" data-percent></div></span>");</script>
+                                        <script>document.write("<span data-tooltip-text=\"총딜량: "+ damage_list[index][1] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][1])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][1])/ total_damage[index]*100)+" chart--red\" data-percent></div></span>");</script>
+                                        <script>document.write("<span data-tooltip-text=\"총딜량: "+ damage_list[index][2] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][2])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][2])/ total_damage[index]*100)+" chart--green\" data-percent></div></span>");</script>
+                                        <script>document.write("<span data-tooltip-text=\"총딜량: "+ damage_list[index][3] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][3])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][3])/ total_damage[index]*100)+" chart--blue\" data-percent></div></span>");</script>
+                                        <script>document.write("<span data-tooltip-text=\"총딜량: "+ damage_list[index][4] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][4])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][4])/ total_damage[index]*100)+" chart--yellow\" data-percent></div></span>");</script>
+                                    </div>
+                              </div>
+
+                                <script>index+=1;</script>
+                            </div>
+                        {% else %}
+                            <div class="main_solid gameinfo_sec0" style="display:flex">
+                              <div style="display:inline-flex">
+                                <div class="gameinfo_sec" style=" background-color: rgb(255,89,89); border-radius: 5px 0px 0px 5px; margin: 2px 3px; width: 10px;"></div>
+
+                                <div class="champImg" style="display:inline-flex; float:none; padding-bottom: 1.7px; margin: 0px 2px 0px -3px; ">
+                                    <script>
+                                        document.write("<img src=\""+ mychampionidurl_list[index] +"\">");
+                                    </script>
+                                </div>
+                              </div>
+
+                              <div class="sec_02" style="margin: 27px 6px 0px 5px;">
+                                    <div class="win_lose" style="color:rgb(255,88,89); padding-left: 0px; margin-top: 38%">패배</div>
+                                    <div class="game_mode_font" style="border-top: 2px solid gray; font-size: 12px; color:gray; font-weight: bold; text-align:center">{{alpha}}</div>
+                              </div>
+
+                              <div class="sec_02" style="margin: 1px 6px 0px 5px;">
+                                    <div class="play_time">
+                                        <script>document.write("플레이타임: "+Math.floor(gametime_list[index])+"분")</script>
+                                    </div>
+                              </div>
+
+                              <div class="gameinfo_sec" style="background-color: rgb(255,89,89);border-radius: 0px 5px 5px 0px;margin: 2px 6px;width: 10px;"></div>
+
+                              <div class="kda" style="display:inline-block; padding-top: 14px;    margin-top: 25px;">
+                                    <div style="font-weight: bold; color: rgb(232,193,147); font-size: 15px;">
+                                        <script>document.write(avgKDA_list[index].toFixed(2) + " KDA");</script>
+                                    </div>
+
+                                    <div style="font-size: 14px; color:  rgb(137, 160, 181); font-weight: bold; padding-top: 2px;  text-align:center">
+                                        <script>
+                                        document.write(mykda_list[index]);
+                                        </script>
+                                    </div>
+                              </div>
+
+                              <div class="sec_03" style="display:inline-block;">
+                                  <div class="player_team" id="player1_L"><script>document.write(nickname_list[index][0])</script></div>
+                                  <div class="player_team" id="player2_L"><script>document.write(nickname_list[index][1])</script></div>
+                                  <div class="player_team" id="player3_L"><script>document.write(nickname_list[index][2])</script></div>
+                                  <div class="player_team" id="player4_L"><script>document.write(nickname_list[index][3])</script></div>
+                                  <div class="player_team" id="player5_L"><script>document.write(nickname_list[index][4])</script></div>
+                              </div>
+
+
+                              <div class="sec_05" style="display:inline-block;">
+                                    <div class="charts" style="width: 5000%; overflow:visible;">
+                                        <script>document.write("<span data-tooltip-text=\"총딜량: "+ damage_list[index][0] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][0])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][0])/ total_damage[index]*100)+" chart--default\" data-percent></div></span>");</script>
+                                        <script>document.write("<span data-tooltip-text=\"총딜량: "+ damage_list[index][1] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][1])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][1])/ total_damage[index]*100)+" chart--red\" data-percent></div></span>");</script>
+                                        <script>document.write("<span data-tooltip-text=\"총딜량: "+ damage_list[index][2] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][2])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][2])/ total_damage[index]*100)+" chart--green\" data-percent></div></span>");</script>
+                                        <script>document.write("<span data-tooltip-text=\"총딜량: "+ damage_list[index][3] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][3])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][3])/ total_damage[index]*100)+" chart--blue\" data-percent></div></span>");</script>
+                                        <script>document.write("<span data-tooltip-text=\"총딜량: "+ damage_list[index][4] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][4])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][4])/ total_damage[index]*100)+" chart--yellow\" data-percent></div></span>");</script>
+                                    </div>
+                              </div>
+                                <script>index+=1;</script>
+                            </div>
+
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}{% endfor %}
+
+
+            {% endif %}
+        </div>
+
+  </body>
+</html>
+
+
