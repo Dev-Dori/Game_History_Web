@@ -22,11 +22,27 @@
             color: white;
         }
 
+        .pl_ginfo_sec1{
+            float: none;
+            margin: 0 auto;
+            border-radius: 20px;
+            display:inline-block;
+            width:350px;
+        }
+
         .main_solid{
             padding-bottom: 30px;
             margin-top: 2px;
             padding-top: 0.2px;
             border-radius: 18px;
+            border : 3px solid white;
+        }
+
+        .main_solid2{
+            padding-bottom: 30px;
+            margin-top: 2px;
+            padding-top: 0.2px;
+            border-radius: 10px 10px 10px 10px;
             border : 3px solid white;
         }
 
@@ -41,8 +57,9 @@
 
         .tier_icon{
             border-radius: 25px;
-            border: 1px solid white;
-            width:86%;
+            border-bottom: 1px solid white;
+            width:70%;
+            margin-bottom: 2px;
         }
 
         .gameinfo_sec0{
@@ -130,6 +147,38 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
+
+        .champImg{
+            display:inline-flex;
+            float:none;
+            padding-bottom: 1.7px;
+            margin: 0px 2px 0px -3px;
+        }
+
+        .c100.dark {
+            margin-left: 25px;
+            background-color: #777777;
+        }
+
+        #player_gameinfo_box2{
+            border: 3px solid white;
+            width: 30%;
+            margin-left: 10px;
+            border-radius: 10px 10px 10px 10px;
+            background: rgb(25, 28, 32);
+        }
+
+        .r_banner{
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+            background: linear-gradient(to right, #833ab4, #fd1d1d, #fcb045);
+            border-radius: 5px 5px 0px 0px;
+            width: 100.5%;
+            margin-top: -1px;
+        }
+
         /*--------- 툴팁 ---------- */
 
         /*
@@ -198,3 +247,10 @@ $('.chart1').easyPieChart({
     onStart: $.noop,
     onStop: $.noop
   });
+
+
+
+
+
+  /* ----- 차트   ----- */
+

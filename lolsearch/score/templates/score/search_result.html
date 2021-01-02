@@ -9,6 +9,10 @@
         <link rel="stylesheet" href="{% static 'css/result.css' %}?after">
         <link rel="stylesheet" href="https://cdn.rawgit.com/theus/chart.css/v1.0.0/dist/chart.css" />
         <link rel="stylesheet" href="{% static 'css/circle.css' %}?after">
+        <link rel="stylesheet" href="{% static 'css/chart.css' %}?after">
+        <link type="text/javascript" href="{% static 'script/app.css' %}?after">
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 
 
         <script>
@@ -25,24 +29,187 @@
             var damage_list = {{ damage_list|safe }};
             var total_damage = [10];
             var per_damage = [][10];
+            var win_list = {{ win_list }}
             for(var i=0;i<10;i++){
                 total_damage[i] = damage_list[i][0] + damage_list[i][1]+damage_list[i][2]+damage_list[i][3]+damage_list[i][4];
             }
-
+            var total_win = 0;
+            for(var i=0;i<10;i++){
+                total_win += parseInt(win_list[i]);
+            }
+            win_per = Math.floor((total_win/10)*100);
 
         </script>
 
-        <style>
-        .charts:not(.charts--vertical) {
-             width: 4000%;
-        }
+        <script>
 
+            var results = [
+              {
+                date: "R8",
+                visits: avgKDA_list[7]
+              },
+              {
+                date: "R7",
+                visits: avgKDA_list[6]
+              },
+              {
+                date: "R6",
+                visits: avgKDA_list[5]
+              },
+              {
+                date: "R5",
+                visits: avgKDA_list[4]
+              },
+              {
+                date: "R4",
+                visits: avgKDA_list[3]
+              },
+              {
+                date: "R3",
+                visits: avgKDA_list[2]
+              },
+              {
+                date: "R2",
+                visits: avgKDA_list[1]
+              },
+              {
+                date: "R1",
+                visits: avgKDA_list[0]
+              }
+            ];
+
+            //this is the function to create the line chart
+            function drawLineChart(div_id, results, yColumn, yLabel, xAxes, firstColour, secondColour, thirdColour, fourthColour) {
+              var ctx = document.getElementById(div_id).getContext("2d");
+              var width = window.innerWidth || document.body.clientWidth;
+              var gradientStroke = ctx.createLinearGradient(0, 0, width, 0);
+              gradientStroke.addColorStop(0, firstColour);
+              gradientStroke.addColorStop(0.3, secondColour);
+              gradientStroke.addColorStop(0.6, thirdColour);
+              gradientStroke.addColorStop(1, fourthColour);
+
+              var labels = results.map(function(item) {
+                return item[xAxes];
+              });
+              var data = results.map(function(item) {
+                return item[yColumn];
+              });
+
+              var myChart = new Chart(ctx, {
+                type: "line",
+                data: {
+                  labels: labels,
+                  datasets: [
+                    {
+                      label: yLabel,
+                      borderColor: gradientStroke,
+                      pointBorderColor: gradientStroke,
+                      pointBackgroundColor: gradientStroke,
+                      pointHoverBackgroundColor: gradientStroke,
+                      pointHoverBorderColor: gradientStroke,
+                      pointBorderWidth: 8,
+                      pointHoverRadius: 8,
+                      pointHoverBorderWidth: 1,
+                      pointRadius: 3,
+                      fill: false,
+                      borderWidth: 4,
+                      data: data
+                    }
+                  ]
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  legend: {
+                    position: "none"
+                  },
+                  scales: {
+                    yAxes: [
+                      {
+                        ticks: {
+                          fontFamily: "Roboto Mono",
+                          fontColor: "#556F7B",
+                          fontStyle: "bold",
+                          beginAtZero: true,
+                          maxTicksLimit: 5,
+                          padding: 20
+                        },
+                        gridLines: {
+                          drawTicks: false,
+                          display: false,
+                          drawBorder: false
+                        }
+                      }
+                    ],
+                    xAxes: [
+                      {
+                        gridLines: {
+                          zeroLineColor: "transparent"
+                        },
+                        ticks: {
+                          padding: 20,
+                          fontColor: "#556F7B",
+                          fontStyle: "bold",
+                          fontFamily: "Roboto Mono"
+                        },
+                        gridLines: {
+                          drawTicks: false,
+                          display: false,
+                          drawBorder: false
+                        }
+                      }
+                    ]
+                  }
+                }
+              });
+            }
+
+
+            //this is to initialise the charts
+            function drawCharts() {
+              drawLineChart(
+                "lineChartBlueGreen",
+                results,
+                "visits",
+                "KDA ",
+                "date",
+                "#7C4DFF",
+                "#448AFF",
+                "#00BCD4",
+                "#1DE9B6"
+              );
+              drawLineChart(
+                "lineChartPinkOrange",
+                results,
+                "visits",
+                "Number of visits",
+                "date",
+                "#F44336",
+                "#F50057",
+                "#FF4081",
+                "#FF9100"
+              );
+            }
+
+        </script>
+
+
+        <style>
+            .c100.dark > span {
+                color: white;
+            }
+
+            .mg{
+                margin: 13%;
+                margin-bottom: 0%;
+                margin-top: 17px;
+            }
         </style>
+
     </head>
 
 
     <body style="background-color: rgb(46, 47 ,50); overflow-x:hidden;">
-
         <div class="container">
             <!-- 첫번째 블록 시작-->
 
@@ -62,15 +229,12 @@
             <!-- 첫번째 블록 끝 -->
 
             {% if summoner_exist %}
-
-            <!-- 두번째 블록 시작-->
-            <div class="main_solid" style="background: rgb(25, 28, 32)">
+            <div class="main_solid" style="background: rgb(25, 28, 32); margin-bottom: 15px;">
                 <div class="row" style="margin: 40px; float: none;">
                     <img style="display: block; margin: 0px; width: 25%" class="img-thumbnail" src="https://opgg-static.akamaized.net/images/profile_icons/profileIcon{{summoners_result.profileIconId}}.jpg?image=q_auto&v=1518361200">  <!-- {% static 'images/profileicon/' %}{{summoners_result.profileIconId}}.png-->
                     <span  class="inbox_letter" style="margin: 20 0 0 20; font-size: 32px;font-weight:bold;">{{ summoners_result.name }}<br>
-                    <span  class="inbox_letter" style="font-size: 20px; ">LV: {{ summoners_result.level }}</span>
+                        <span  class="inbox_letter" style="font-size: 20px; ">LV: {{ summoners_result.level }}</span>
                     </span>
-
                     {% if summoner_exist %}
                     <div class="row" id="printname" style="margin: 3px; float: none;">
                             {% if spectator %}
@@ -82,58 +246,107 @@
                     </div>
                     {% endif %}
                 </div>
-
-                <div class="row" id="two_box">
-                    {% if team_tier or solo_tier %}
-                    <div style="float: none; margin: 0 auto" class="col-5 border border-secondary">
-                    <div class="row">
-                    {% if solo_tier %}
-                        <div class="col-4"> <img src="{% static 'images/emblems/' %}{{solo_tier.tier}}.png" class="tier_icon"> <!--{% static 'images/emblems/Emblem_' %}{{solo_tier.tier}}.png --></div>
-                            <div class="inbox_letter" >
-                            <p>리그: {{ solo_tier.rank_type }}<br></p>
-                                티어: {{ solo_tier.tier }} {{ solo_tier.rank }}<br>
-                                포인트: {{ solo_tier.points }}<br>
-                                전적: {{ solo_tier.wins|add:solo_tier.losses}}전 {{ solo_tier.wins }}승 {{ solo_tier.losses }}패
-                            </div>
-                        </div>
-                    {% else %}
-                            <div class="inbox_letter">배치&전적정보없음</div>
-                    {% endif %}
-                    </div>
-
-
-                    <div class="c100 p70 big green">
-                        <span>80%</span>
-                        <div class="slice">
-                            <div class="bar"></div>
-                            <div class="fill"></div>
-                        </div>
-                    </div>
-
-                    <div style="float: none; margin: 0 auto" class="col-5 border border-secondary">
-                        <div class="row">
-
-                        {% if team_tier %}
-                            <div class="col-4"><img src="{% static 'images/emblems/' %}{{team_tier.tier}}.png"  class="tier_icon"></div>
-                            <div class="inbox_letter">
-                            <p>리그: {{ team_tier.rank_type }}</p>
-                                티어: {{ team_tier.tier }} {{ team_tier.rank }}<br>
-                                포인트: {{ team_tier.points }}<br>
-                                전적: {{ team_tier.wins|add:team_tier.losses}}전 {{ team_tier.wins }}승 {{ team_tier.losses }}패
-                            </div>
-                        {% else %}<div class="inbox_letter">배치&전적정보없음</div>{% endif %}
-                        </div>
-                    </div>
-                </div>
-                {% else %}
-
-                <div style="float: none; margin: 0 auto" class="col-5 border border-secondary"><div class="row"><div class="inbox_letter">배치&전적정보없음</div></div></div>
-
-                </div>
-                {% endif %}
-                {% else %}<div class="inbox_letter" style="border: 2px solid white; border-radius: 5px; padding: 6px;">사용자가 존재하지 않습니다. </div>{% endif %}
             </div>
 
+            <!-- 두번째 블록 시작-->
+            <div style="display:flex">
+                <div class="main_solid2" style="background: rgb(25, 28, 32);display: inline-flex;width: 800px;display: block;">
+                    <div class="r_banner" style="width:100%;height:28px;">RANK INFO.</div>
+                    <div class="row" class="player_gameinfo_box">
+                            <div class="pl_ginfo_sec1">
+                                {% if solo_tier %}
+                                    <div style="text-align:center;margin-bottom: 40px;"><img src="{% static 'images/emblems/' %}{{solo_tier.tier}}.png" class="tier_icon"></div> <!--{% static 'images/emblems/Emblem_' %}{{solo_tier.tier}}.png -->
+                                    <script>document.write("<div class=\"c100 p"+Math.floor(({{ solo_tier.wins }}/{{ solo_tier.wins|add:solo_tier.losses}})*100)+" dark orange\">")</script>
+                                        <span><script>document.write(Math.floor(({{ solo_tier.wins }}/{{ solo_tier.wins|add:solo_tier.losses}})*100)+"%");</script></span>
+                                        <div class="slice">
+                                            <div class="bar"></div>
+                                            <div class="fill"></div>
+                                        </div>
+                                    </div>
+                                    <div class="inbox_letter">
+                                        <p>리그: {{ solo_tier.rank_type }}<br></p>
+                                           티어: {{ solo_tier.tier }} {{ solo_tier.rank }}<br>
+                                           포인트: {{ solo_tier.points }}<br>
+                                           전적: {{ solo_tier.wins|add:solo_tier.losses}}전 {{ solo_tier.wins }}승 {{ solo_tier.losses }}패
+                                    </div>
+                                {% else %}
+                                    <div style="text-align:center;margin-bottom: 40px;"><img style="width:80%" src="{% static 'images/emblems/' %}default.png" class="tier_icon"></div> <!--{% static 'images/emblems/Emblem_' %}{{solo_tier.tier}}.png -->
+                                    <div class="c100 p0 dark orange">
+                                        <span>0%</span>
+                                        <div class="slice">
+                                            <div class="bar"></div>
+                                            <div class="fill"></div>
+                                        </div>
+                                    </div>
+                                    <div class="inbox_letter">
+                                        <p>리그: 솔로랭크 5:5<br></p>
+                                           티어: Unranked<br>
+                                           포인트: 0<br>
+                                           전적: 0전 0승 0패
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="pl_ginfo_sec1" style="float: none; margin: 0 auto">
+                                {% if team_tier %}
+                                    <div style="text-align:center;margin-bottom: 40px;"><img src="{% static 'images/emblems/' %}{{team_tier.tier}}.png" class="tier_icon"></div> <!--{% static 'images/emblems/Emblem_' %}{{solo_tier.tier}}.png -->
+                                    <script>document.write("<div class=\"c100 p"+Math.floor(({{ team_tier.wins }}/{{ team_tier.wins|add:team_tier.losses}})*100)+" dark orange\">")</script>
+                                        <span><script>document.write(Math.floor(({{ team_tier.wins }}/{{ team_tier.wins|add:team_tier.losses}})*100)+"%");</script></span>
+                                        <div class="slice">
+                                            <div class="bar"></div>
+                                            <div class="fill"></div>
+                                        </div>
+                                    </div>
+                                    <div class="inbox_letter">
+                                        <p>리그: {{ team_tier.rank_type }}<br></p>
+                                           티어: {{ team_tier.tier }} {{ team_tier.rank }}<br>
+                                           포인트: {{ team_tier.points }}<br>
+                                           전적: {{ team_tier.wins|add:team_tier.losses}}전 {{ team_tier.wins }}승 {{ team_tier.losses }}패
+                                    </div>
+                                {% else %}
+                                    <div style="text-align:center;margin-bottom: 40px;"><img style="width:80%" src="{% static 'images/emblems/' %}default.png" class="tier_icon"></div> <!--{% static 'images/emblems/Emblem_' %}{{solo_tier.tier}}.png -->
+                                    <div class="c100 p0 dark orange">
+                                        <span>0%</span>
+                                        <div class="slice">
+                                            <div class="bar"></div>
+                                            <div class="fill"></div>
+                                        </div>
+                                    </div>
+                                    <div class="inbox_letter">
+                                        <p>리그: 자유랭크 5:5<br></p>
+                                           티어: Unranked<br>
+                                           포인트: 0<br>
+                                           전적: 0전 0승 0패
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div id="player_gameinfo_box2">
+                        <div class="r_banner">LAST 10 GAME INFORMATION</div>
+
+                        <div>
+                            <script>document.write("<div class=\"c100 p"+(win_per)+" big dark green mg\" style=\"margin-top: 10px;margin-left: 12%;\">")</script>
+                                <span><script>document.write((win_per)+"%");</script></span>
+                                <div class="slice">
+                                    <div class="bar"></div>
+                                    <div class="fill"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="text-align:center; color: white; font-weight:bold">[ 지난 10판 승률 ]</div>
+                        <body onload="drawCharts()">
+                                <br>
+                              <div class="chartContainer" style="margin-bottom:0px;">
+                                <canvas id="lineChartBlueGreen" width="400px" height="185px"></canvas>
+                              </div>
+                        </body>
+
+                    </div>
+                    {% else %}
+                    <div style="float: none; margin: 0 auto" class="col-5 border border-secondary"><div class="row"><div class="inbox_letter">배치&전적정보없음</div></div></div></div>
+                    {% endif %}
+            </div>
             <!-- 두번째 블록 끝 -->
 
 
@@ -143,11 +356,11 @@
                 {% for win in win_list %}{% for alpha in gametype_list %}
                       {% if forloop.counter == forloop.parentloop.counter %}
                         {% if win%}
-                            <div class="main_solid gameinfo_sec0" style="display:flex">
+                            <div class="main_solid gameinfo_sec0" style="display:flex;overflow: hidden;">
                               <div style="display:inline-flex">
-                                <div class="gameinfo_sec" style=" background-color: rgb(163,207,236);; border-radius: 5px 0px 0px 5px; margin: 2px 3px; width: 10px;"></div>
+                                <div class="gameinfo_sec" style=" background-color: rgb(163,207,236); border-radius: 5px 0px 0px 5px; margin: 2px 3px; width: 10px;"></div>
 
-                                <div class="champImg" style="display:inline-flex; float:none; padding-bottom: 1.7px; margin: 0px 2px 0px -3px; ">
+                                <div class="champImg">
                                     <script>
                                         document.write("<img src=\""+ mychampionidurl_list[index] +"\">");
                                     </script>
@@ -190,23 +403,23 @@
 
 
                               <div class="sec_05" style="display:inline-block;">
-                                    <div class="charts" style="width: 5000%;">
-                                        <script>document.write("<span data-tooltip-text=\"총딜량: "+ damage_list[index][0] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][0])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][0])/ total_damage[index]*100)+" chart--default\" data-percent></div></span>");</script>
-                                        <script>document.write("<span data-tooltip-text=\"총딜량: "+ damage_list[index][1] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][1])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][1])/ total_damage[index]*100)+" chart--red\" data-percent></div></span>");</script>
-                                        <script>document.write("<span data-tooltip-text=\"총딜량: "+ damage_list[index][2] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][2])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][2])/ total_damage[index]*100)+" chart--green\" data-percent></div></span>");</script>
-                                        <script>document.write("<span data-tooltip-text=\"총딜량: "+ damage_list[index][3] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][3])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][3])/ total_damage[index]*100)+" chart--blue\" data-percent></div></span>");</script>
-                                        <script>document.write("<span data-tooltip-text=\"총딜량: "+ damage_list[index][4] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][4])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][4])/ total_damage[index]*100)+" chart--yellow\" data-percent></div></span>");</script>
+                                    <div class="charts" style="width: 4700%;">
+                                        <script>document.write("<span data-tooltip-text=\"딜량: "+ damage_list[index][0] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][0])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][0])/ total_damage[index]*100)+" chart--default\" data-percent></div></span>");</script>
+                                        <script>document.write("<span data-tooltip-text=\"딜량: "+ damage_list[index][1] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][1])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][1])/ total_damage[index]*100)+" chart--red\" data-percent></div></span>");</script>
+                                        <script>document.write("<span data-tooltip-text=\"딜량: "+ damage_list[index][2] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][2])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][2])/ total_damage[index]*100)+" chart--green\" data-percent></div></span>");</script>
+                                        <script>document.write("<span data-tooltip-text=\"딜량: "+ damage_list[index][3] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][3])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][3])/ total_damage[index]*100)+" chart--blue\" data-percent></div></span>");</script>
+                                        <script>document.write("<span data-tooltip-text=\"딜량: "+ damage_list[index][4] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][4])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][4])/ total_damage[index]*100)+" chart--yellow\" data-percent></div></span>");</script>
                                     </div>
                               </div>
 
                                 <script>index+=1;</script>
                             </div>
                         {% else %}
-                            <div class="main_solid gameinfo_sec0" style="display:flex">
+                            <div class="main_solid gameinfo_sec0" style="display:flex;overflow: hidden;">
                               <div style="display:inline-flex">
                                 <div class="gameinfo_sec" style=" background-color: rgb(255,89,89); border-radius: 5px 0px 0px 5px; margin: 2px 3px; width: 10px;"></div>
 
-                                <div class="champImg" style="display:inline-flex; float:none; padding-bottom: 1.7px; margin: 0px 2px 0px -3px; ">
+                                <div class="champImg">
                                     <script>
                                         document.write("<img src=\""+ mychampionidurl_list[index] +"\">");
                                     </script>
@@ -238,7 +451,7 @@
                                     </div>
                               </div>
 
-                              <div class="sec_03" style="display:inline-block;">
+                              <div class="sec_03" style="margin-top: 5px;display:inline-block;">
                                   <div class="player_team" id="player1_L"><script>document.write(nickname_list[index][0])</script></div>
                                   <div class="player_team" id="player2_L"><script>document.write(nickname_list[index][1])</script></div>
                                   <div class="player_team" id="player3_L"><script>document.write(nickname_list[index][2])</script></div>
@@ -248,12 +461,12 @@
 
 
                               <div class="sec_05" style="display:inline-block;">
-                                    <div class="charts" style="width: 5000%; overflow:visible;">
-                                        <script>document.write("<span data-tooltip-text=\"총딜량: "+ damage_list[index][0] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][0])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][0])/ total_damage[index]*100)+" chart--default\" data-percent></div></span>");</script>
-                                        <script>document.write("<span data-tooltip-text=\"총딜량: "+ damage_list[index][1] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][1])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][1])/ total_damage[index]*100)+" chart--red\" data-percent></div></span>");</script>
-                                        <script>document.write("<span data-tooltip-text=\"총딜량: "+ damage_list[index][2] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][2])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][2])/ total_damage[index]*100)+" chart--green\" data-percent></div></span>");</script>
-                                        <script>document.write("<span data-tooltip-text=\"총딜량: "+ damage_list[index][3] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][3])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][3])/ total_damage[index]*100)+" chart--blue\" data-percent></div></span>");</script>
-                                        <script>document.write("<span data-tooltip-text=\"총딜량: "+ damage_list[index][4] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][4])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][4])/ total_damage[index]*100)+" chart--yellow\" data-percent></div></span>");</script>
+                                    <div class="charts" style="width: 4700%; overflow:visible;">
+                                        <script>document.write("<span data-tooltip-text=\"딜량: "+ damage_list[index][0] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][0])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][0])/ total_damage[index]*100)+" chart--default\" data-percent></div></span>");</script>
+                                        <script>document.write("<span data-tooltip-text=\"딜량: "+ damage_list[index][1] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][1])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][1])/ total_damage[index]*100)+" chart--red\" data-percent></div></span>");</script>
+                                        <script>document.write("<span data-tooltip-text=\"딜량: "+ damage_list[index][2] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][2])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][2])/ total_damage[index]*100)+" chart--green\" data-percent></div></span>");</script>
+                                        <script>document.write("<span data-tooltip-text=\"딜량: "+ damage_list[index][3] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][3])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][3])/ total_damage[index]*100)+" chart--blue\" data-percent></div></span>");</script>
+                                        <script>document.write("<span data-tooltip-text=\"딜량: "+ damage_list[index][4] +"\"><div style=\"width:"+Math.floor(parseInt(damage_list[index][4])/ total_damage[index]*100)+"%;\" class=\"charts__chart chart--p"+Math.floor(parseInt(damage_list[index][4])/ total_damage[index]*100)+" chart--yellow\" data-percent></div></span>");</script>
                                     </div>
                               </div>
                                 <script>index+=1;</script>

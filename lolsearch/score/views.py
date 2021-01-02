@@ -119,7 +119,7 @@ def search_result(request):
                         if mykill == 0 and myassist == 0:
                             myavgkda_list.append(0.1)
                         else:
-                            myavgkda_list.append('perfect')
+                            myavgkda_list.append(mykill+myassist)
                     else:
                         myavgkda_list.append(round(((mykill+myassist)/mydeath),2))
 
@@ -227,3 +227,4 @@ def search_result(request):
                        'mytotaldamage_list': mytotaldamage_list, 'myconkill_list': myconkill_list, 'mychampionid_list': mychampionid_list,
                        'myavgkda_list': myavgkda_list, 'gametime_list': gametime_list, 'nickname_list': nickname_list,
                        'damage_list': damage_list})
+
