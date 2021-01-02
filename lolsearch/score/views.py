@@ -38,7 +38,7 @@ def search_result(request):
         totaldamage_list = [[0 for col in range(10)] for row in range(10)]
         conkill_list = [[0 for col in range(10)] for row in range(10)]
         kda_list = [[0 for col in range(10)] for row in range(10)]
-        api_key = 'RGAPI-7779da7e-95bf-4647-b59e-f01da5480141'
+        api_key = '   '  #api key
 
         summoner_url = "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/" + str(summoner_name)
         params = {'api_key': api_key}
