@@ -5,4 +5,4 @@
 ->using Djnago league of legend match history site 
 
 
-please change api key in lolsearch/score/views.py
+please change api key in lolsearch/score/views.py.
